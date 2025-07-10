@@ -1,6 +1,7 @@
 USE gdb023;
 
 
+
 SHOW TABLES; -- Gets all tables in the database
 -- dim_product;
 -- fact_gross_price;
@@ -27,7 +28,7 @@ WHERE fiscal_year = 2020
 SELECT COUNT(DISTINCT product_code) AS prd_count_2021
 FROM fact_sales_monthly
 WHERE fiscal_year = 2021
-) SELECT prd_count_2020, prd_count_2021, ROUND(((prd_count_2021 - prd_count_2020) / prd_count_2020) * 100, 2) AS percentage_change
+) SELECT prd_count_2020, prd_count_2021, CONCAT(ROUND(((prd_count_2021 - prd_count_2020) / prd_count_2020) * 100, 2), '%') AS percentage_change
 FROM unique_prds_2020 
 JOIN unique_prds_2021; -- cross join, No Query condition
 
@@ -66,7 +67,6 @@ JOIN prods_2021 AS p21
 
 
 
-
 -- 5) products with the highest and lowest manufacturing costs
 WITH max_min_cost_prods AS (
 SELECT product_code, manufacturing_cost
@@ -87,7 +87,7 @@ JOIN dim_product AS prds
 
 -- 6) Top 5 companies with high average pre invoice discount percentages
 SELECT DISTINCT cust.customer_code, customer,
-ROUND(AVG(pre_invoice_discount_pct), 2) AS average_discount_percentage
+ROUND(AVG(pre_invoice_discount_pct) * 100, 2) AS average_discount_percentage
 FROM dim_customer AS cust
 JOIN fact_pre_invoice_deductions AS invoices
 	ON cust.customer_code = invoices.customer_code
